@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tictoe - Play & Earn</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0b1020;
+  color: white;
+  text-align: center;
+}
+
+header {
+  padding: 22px 15px;
+  background: #151d35;
+  border-bottom: 1px solid #293451;
+}
+
+.logo {
+  font-size: 32px;
+  font-weight: bold;
+  color: #70f0c0;
+}
+
+header p {
+  color: #b7c1d9;
+  margin-bottom: 0;
+}
+
+.container {
+  max-width: 450px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: #151d35;
+  border: 1px solid #293451;
+  border-radius: 18px;
+  padding: 20px;
+  margin: 18px 0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat {
+  background: #202b48;
+  padding: 15px 8px;
+  border-radius: 12px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 25px;
+  color: #70f0c0;
+  margin-top: 8px;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  background: #70f0c0;
+  color: #0b1020;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.secondary {
+  background: #293451;
+  color: white;
+}
+
+.hidden {
+  display: none;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 20px auto;
+  max-width: 300px;
+}
+
+.cell {
+  aspect-ratio: 1;
+  font-size: 42px;
+  margin: 0;
+  padding: 0;
+  background: #202b48;
+  color: white;
+  border: 1px solid #394969;
+}
+
+.cell:disabled {
+  opacity: 1;
+}
+
+#status {
+  min-height: 28px;
+  line-height: 1.5;
+  color: #70f0c0;
+}
+
+.progress {
+  background: #293451;
+  height: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: #70f0c0;
+  transition: width 0.2s;
+}
+
+.small {
+  color: #b7c1d9;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+footer {
+  padding: 20px;
+  color: #8490ac;
+  font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">tictoe.</div>
+  <p>Play Tic-Tac-Toe against the computer!</p>
+</header>
+
+<main class="container">
+
+  <section id="home">
+
+    <div class="card">
+      <h2>Welcome to Tictoe 🎮</h2>
+      <p>Play a quick game and track your progress.</p>
+
+      <div class="stats">
+        <div class="stat">
+          Completed Games
+          <strong id="games">0</strong>
+        </div>
+
+        <div class="stat">
+          Demo Rewards
+          <strong id="balance">₹0</strong>
+        </div>
+      </div>
+
+      <p class="small">Next reward milestone: 100 completed games</p>
+
+      <div class="progress">
+        <div id="progressBar"></div>
+      </div>
+
+      <p id="progressText" class="small">0 / 100 games</p>
+
+      <button onclick="startGame()">🎮 Play Game</button>
+      <button class="secondary" onclick="showRewards()">🏆 Rewards</button>
+      <button class="secondary" onclick="showWithdrawal()">💳 Withdrawal</button>
+    </div>
+
+    <div class="card">
+      <h3>How to Play</h3>
+      <p class="small">
+        1. Play against the computer.<br>
+        2. Complete a match to update your demo counter.<br>
+        3. Every 100 completed matches adds ₹3 to the demo balance.
+      </p>
+    </div>
+
+  </section>
+
+  <section id="gameScreen" class="card hidden">
+    <h2>🎮 Tic-Tac-Toe</h2>
+    <p class="small">You are X. Computer is O.</p>
+
+    <div class="board" id="board"></div>
+    <p id="status">Your turn!</p>
+
+    <button id="restartBtn" onclick="resetBoard()">Play Again</button>
+    <button class="secondary" onclick="goHome()">Home</button>
+  </section>
+
+  <section id="rewardsScreen" class="card hidden">
+    <h2>🏆 Rewards</h2>
+    <h3 id="rewardBalance">₹0</h3>
+    <p id="rewardMessage" class="small"></p>
+    <p class="small">
+      This is a demonstration only. No real money is awarded.
+    </p>
+    <button onclick="goHome()">Back Home</button>
+  </section>
+
+  <section id="withdrawScreen" class="card hidden">
+    <h2>💳 Withdrawal</h2>
+    <p>Minimum withdrawal: <strong>₹10</strong></p>
+    <p id="withdrawBalance">Demo balance: ₹0</p>
+
+    <p class="small">
+      Real withdrawals are not available in this prototype.
+      A verified account, secure backend and payment integration
+      will be required before real payouts can be enabled.
+    </p>
+
+    <button disabled>Withdraw ₹10</button>
+    <button class="secondary" onclick="goHome()">Back Home</button>
+  </section>
+
+</main>
+
+<footer>
+  Tictoe © 2026 · Demo Version
+</footer>
+
+<script>
+const STORAGE_KEY = "tictoe_demo_v1";
+
+let completedGames = 0;
+let board = Array(9).fill("");
+let gameActive = false;
+let busy = false;
+let finished = false;
+let moveTimer = null;
+
+function loadProgress() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+    if (saved && Number.isInteger(saved.games) &&
+        saved.games >= 0 && saved.games <= 1000000) {
+      completedGames = saved.games;
+    }
+  } catch (error) {
+    completedGames = 0;
+  }
+
+  updateStats();
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ games: completedGames })
+    );
+  } catch (error) {
+    console.log("Progress could not be saved.");
+  }
+}
+
+function demoBalance() {
+  return Math.floor(completedGames / 100) * 3;
+}
+
+function updateStats() {
+  document.getElementById("games").textContent = completedGames;
+  document.getElementById("balance").textContent = "₹" + demoBalance();
+
+  const progress = completedGames % 100;
+  document.getElementById("progressBar").style.width = progress + "%";
+
+  document.getElementById("progressText").textContent =
+    progress + " / 100 games until next milestone";
+}
+
+function hideScreens() {
+  ["home", "gameScreen", "rewardsScreen", "withdrawScreen"]
+    .forEach(id => document.getElementById(id).classList.add("hidden"));
+}
+
+function goHome() {
+  clearTimeout(moveTimer);
+  hideScreens();
+  document.getElementById("home").classList.remove("hidden");
+  updateStats();
+}
+
+function startGame() {
+  if (!navigator.onLine) {
+    alert("Internet connection required!");
+    return;
+  }
+
+  hideScreens();
+  document.getElementById("gameScreen").classList.remove("hidden");
+  resetBoard();
+}
+
+function resetBoard() {
+  clearTimeout(moveTimer);
+  board = Array(9).fill("");
+  gameActive = true;
+  busy = false;
+  finished = false;
+
+  document.getElementById("status").textContent = "Your turn! Select a square.";
+  document.getElementById("restartBtn").textContent = "Restart Match";
+
+  renderBoard();
+}
+
+function renderBoard() {
+  const element = document.getElementById("board");
+  element.innerHTML = "";
+
+  board.forEach((value, index) => {
+    const button = document.createElement("button");
+    button.className = "cell";
+    button.textContent = value;
+
+    button.disabled = !gameActive || busy || value !== "";
+
+    button.addEventListener("click", () => playerMove(index));
+    element.appendChild(button);
+  });
+}
+
+const winningLines = [
+  [0,1,2], [3,4,5], [6,7,8],
+  [0,3,6], [1,4,7], [2,5,8],
+  [0,4,8], [2,4,6]
+];
+
+function getWinner(squares) {
+  for (const [a, b, c] of winningLines) {
+    if (squares[a] &&
+        squares[a] === squares[b] &&
+        squares[b] === squares[c]) {
+      return squares[a];
+    }
+  }
+
+  return squares.every(Boolean) ? "draw" : null;
+}
+
+function playerMove(index) {
+  if (!gameActive || busy || board[index] || finished) return;
+
+  board[index] = "X";
+
+  if (checkResult()) return;
+
+  busy = true;
+  renderBoard();
+
+  document.getElementById("status").textContent = "Computer is thinking...";
+
+  moveTimer = setTimeout(() => {
+    if (!gameActive) return;
+
+    computerMove();
+    busy = false;
+
+    if (!checkResult()) {
+      document.getElementById("status").textContent = "Your turn!";
+    }
+
+    renderBoard();
+  }, 350);
+}
+
+function computerMove() {
+  const available = board
+    .map((value, index) => value === "" ? index : -1)
+    .filter(index => index !== -1);
+
+  if (!available.length) return;
+
+  // Try to win.
+  let move = findWinningMove("O");
+
+  // Otherwise block the player.
+  if (move === -1) move = findWinningMove("X");
+
+  // Take the center if available.
+  if (move === -1 && board[4] === "") move = 4;
+
+  // Otherwise select a random empty square.
+  if (move === -1) {
+    move = available[Math.floor(Math.random() * available.length)];
+  }
+
+  board[move] = "O";
+}
+
+function findWinningMove(player) {
+  for (let i = 0; i < 9; i++) {
+    if (board[i] !== "") continue;
+
+    const test = [...board];
+    test[i] = player;
+
+    if (getWinner(test) === player) return i;
+  }
+
+  return -1;
+}
+
+function checkResult() {
+  const result = getWinner(board);
+
+  if (!result) {
+    renderBoard();
+    return false;
+  }
+
+  gameActive = false;
+  busy = false;
+  finished = true;
+
+  if (result === "X") {
+    document.getElementById("status").textContent = "🎉 You won!";
+  } else if (result === "O") {
+    document.getElementById("status").textContent = "Computer won! Try again.";
+  } else {
+    document.getElementById("status").textContent = "It's a draw!";
+  }
+
+  // Prototype counter: all completed outcomes count.
+  completedGames++;
+  saveProgress();
+  updateStats();
+  renderBoard();
+
+  document.getElementById("restartBtn").textContent = "Play Next Match";
+
+  return true;
+}
+
+function showRewards() {
+  hideScreens();
+  document.getElementById("rewardsScreen").classList.remove("hidden");
+
+  document.getElementById("rewardBalance").textContent = "₹" + demoBalance();
+
+  document.getElementById("rewardMessage").textContent =
+    completedGames + " demo matches completed. " +
+    (completedGames % 100) + " matches toward the next milestone.";
+}
+
+function showWithdrawal() {
+  hideScreens();
+  document.getElementById("withdrawScreen").classList.remove("hidden");
+  document.getElementById("withdrawBalance").textContent =
+    "Demo balance: ₹" + demoBalance();
+}
+
+window.addEventListener("offline", () => {
+  if (!document.getElementById("gameScreen").classList.contains("hidden")) {
+    gameActive = false;
+    busy = false;
+    clearTimeout(moveTimer);
+    document.getElementById("status").textContent =
+      "Internet disconnected. Reconnect to continue.";
+    renderBoard();
+  }
+});
+
+window.addEventListener("online", () => {
+  if (!document.getElementById("gameScreen").classList.contains("hidden")) {
+    document.getElementById("status").textContent =
+      "Connection restored. Start a new match.";
+    resetBoard();
+  }
+});
+
+loadProgress();
+</script>
+
+</body>
+</html>
