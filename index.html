@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Tictoe - Play & Earn</title>
 
 <style>
@@ -32,7 +33,6 @@ header {
 
 header p {
   color: #b7c1d9;
-  margin-bottom: 0;
 }
 
 .container {
@@ -49,41 +49,32 @@ header p {
   margin: 18px 0;
 }
 
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.stat {
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #394969;
   background: #202b48;
-  padding: 15px 8px;
-  border-radius: 12px;
-}
-
-.stat strong {
-  display: block;
-  font-size: 25px;
-  color: #70f0c0;
-  margin-top: 8px;
+  color: white;
+  font-size: 16px;
 }
 
 button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
   border: none;
   border-radius: 12px;
-  padding: 14px 20px;
+  background: #70f0c0;
+  color: #0b1020;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
-  background: #70f0c0;
-  color: #0b1020;
 }
 
 button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .secondary {
@@ -92,22 +83,47 @@ button:disabled {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
+}
+
+.small {
+  color: #b7c1d9;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat {
+  background: #202b48;
+  padding: 15px 5px;
+  border-radius: 12px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 24px;
+  color: #70f0c0;
+  margin-top: 8px;
 }
 
 .board {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  margin: 20px auto;
   max-width: 300px;
+  margin: 20px auto;
 }
 
 .cell {
   aspect-ratio: 1;
   font-size: 42px;
-  margin: 0;
   padding: 0;
+  margin: 0;
   background: #202b48;
   color: white;
   border: 1px solid #394969;
@@ -117,35 +133,17 @@ button:disabled {
   opacity: 1;
 }
 
-#status {
-  min-height: 28px;
-  line-height: 1.5;
+#status, #authMessage {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+#authMessage {
   color: #70f0c0;
 }
 
-.progress {
-  background: #293451;
-  height: 10px;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 12px;
-}
-
-#progressBar {
-  height: 100%;
-  width: 0%;
-  background: #70f0c0;
-  transition: width 0.2s;
-}
-
-.small {
-  color: #b7c1d9;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
 footer {
-  padding: 20px;
+  padding: 25px 10px;
   color: #8490ac;
   font-size: 12px;
 }
@@ -161,11 +159,52 @@ footer {
 
 <main class="container">
 
-  <section id="home">
+  <!-- LOGIN / SIGN UP -->
+  <section id="authScreen" class="card">
+    <h2 id="authTitle">Welcome to Tictoe 🎮</h2>
+
+    <p class="small" id="authDescription">
+      Login or create an account to continue.
+    </p>
+
+    <form id="authForm">
+      <input
+        id="email"
+        type="email"
+        placeholder="Email address"
+        autocomplete="email"
+        required
+      >
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Password (minimum 6 characters)"
+        autocomplete="current-password"
+        minlength="6"
+        required
+      >
+
+      <button id="submitButton" type="submit">Login</button>
+    </form>
+
+    <button id="switchAuth" class="secondary" type="button">
+      Create a new account
+    </button>
+
+    <button id="forgotPassword" class="secondary" type="button">
+      Forgot password?
+    </button>
+
+    <p id="authMessage" class="small" role="status"></p>
+  </section>
+
+  <!-- HOME -->
+  <section id="homeScreen" class="hidden">
 
     <div class="card">
-      <h2>Welcome to Tictoe 🎮</h2>
-      <p>Play a quick game and track your progress.</p>
+      <h2>Welcome! 🎮</h2>
+      <p id="userEmail" class="small"></p>
 
       <div class="stats">
         <div class="stat">
@@ -179,91 +218,224 @@ footer {
         </div>
       </div>
 
-      <p class="small">Next reward milestone: 100 completed games</p>
-
-      <div class="progress">
-        <div id="progressBar"></div>
-      </div>
-
-      <p id="progressText" class="small">0 / 100 games</p>
-
-      <button onclick="startGame()">🎮 Play Game</button>
-      <button class="secondary" onclick="showRewards()">🏆 Rewards</button>
-      <button class="secondary" onclick="showWithdrawal()">💳 Withdrawal</button>
-    </div>
-
-    <div class="card">
-      <h3>How to Play</h3>
-      <p class="small">
-        1. Play against the computer.<br>
-        2. Complete a match to update your demo counter.<br>
-        3. Every 100 completed matches adds ₹3 to the demo balance.
+      <p id="progressText" class="small">
+        0 / 100 games until next milestone
       </p>
+
+      <button id="offlinePlay">🎮 Offline Play</button>
+      <button id="onlinePlay" class="secondary">🌐 Online Play</button>
+
+      <p id="onlineMessage" class="small"></p>
+
+      <button id="rewardsButton" class="secondary">
+        🏆 Rewards
+      </button>
+
+      <button id="withdrawButton" class="secondary">
+        💳 Withdrawal
+      </button>
+
+      <button id="logoutButton" class="secondary">
+        Logout
+      </button>
     </div>
 
   </section>
 
+  <!-- GAME -->
   <section id="gameScreen" class="card hidden">
-    <h2>🎮 Tic-Tac-Toe</h2>
+    <h2>Tic-Tac-Toe 🎮</h2>
     <p class="small">You are X. Computer is O.</p>
 
-    <div class="board" id="board"></div>
-    <p id="status">Your turn!</p>
+    <div id="board" class="board"></div>
 
-    <button id="restartBtn" onclick="resetBoard()">Play Again</button>
-    <button class="secondary" onclick="goHome()">Home</button>
+    <p id="status" role="status">Your turn!</p>
+
+    <button id="restartButton">Play Again</button>
+    <button id="gameHomeButton" class="secondary">Home</button>
   </section>
 
+  <!-- REWARDS -->
   <section id="rewardsScreen" class="card hidden">
     <h2>🏆 Rewards</h2>
+
     <h3 id="rewardBalance">₹0</h3>
     <p id="rewardMessage" class="small"></p>
+
     <p class="small">
-      This is a demonstration only. No real money is awarded.
+      This is a demo balance, not real money.
     </p>
-    <button onclick="goHome()">Back Home</button>
+
+    <button id="rewardsHomeButton">Back Home</button>
   </section>
 
+  <!-- WITHDRAWAL -->
   <section id="withdrawScreen" class="card hidden">
     <h2>💳 Withdrawal</h2>
-    <p>Minimum withdrawal: <strong>₹10</strong></p>
-    <p id="withdrawBalance">Demo balance: ₹0</p>
+
+    <p>Minimum withdrawal: ₹10</p>
+    <p id="withdrawBalance" class="small"></p>
 
     <p class="small">
-      Real withdrawals are not available in this prototype.
-      A verified account, secure backend and payment integration
-      will be required before real payouts can be enabled.
+      Real withdrawals are not available yet.
     </p>
 
     <button disabled>Withdraw ₹10</button>
-    <button class="secondary" onclick="goHome()">Back Home</button>
+    <button id="withdrawHomeButton" class="secondary">
+      Back Home
+    </button>
   </section>
 
 </main>
 
 <footer>
-  Tictoe © 2026 · Demo Version
+  Tictoe © 2026 Suryam Kumar
 </footer>
 
-<script>
-const STORAGE_KEY = "tictoe_demo_v1";
+<script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+
+/* FIREBASE CONFIGURATION */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBmYmpv0Ott7zcnJuSKpPKBl5oCfr6byrc",
+  authDomain: "tictoe-1st.firebaseapp.com",
+  projectId: "tictoe-1st",
+  storageBucket: "tictoe-1st.firebasestorage.app",
+  messagingSenderId: "443194033256",
+  appId: "1:443194033256:web:0dbc3df9b36860e70e67dd"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+
+/* ELEMENTS */
+
+const $ = id => document.getElementById(id);
+
+const screens = [
+  "authScreen",
+  "homeScreen",
+  "gameScreen",
+  "rewardsScreen",
+  "withdrawScreen"
+];
+
+function showScreen(id) {
+  screens.forEach(screen => $(screen).classList.add("hidden"));
+  $(id).classList.remove("hidden");
+}
+
+function message(text) {
+  $("authMessage").textContent = text;
+}
+
+
+/* AUTHENTICATION */
+
+let authMode = "login";
+let currentUser = null;
+
+$("switchAuth").addEventListener("click", () => {
+  authMode = authMode === "login" ? "signup" : "login";
+
+  $("authTitle").textContent =
+    authMode === "signup" ? "Create Account 🎮" : "Welcome to Tictoe 🎮";
+
+  $("submitButton").textContent =
+    authMode === "signup" ? "Create Account" : "Login";
+
+  $("switchAuth").textContent =
+    authMode === "signup" ? "Already have an account? Login" :
+    "Create a new account";
+
+  $("password").autocomplete =
+    authMode === "signup" ? "new-password" : "current-password";
+
+  message("");
+});
+
+$("authForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const email = $("email").value.trim();
+  const password = $("password").value;
+
+  $("submitButton").disabled = true;
+  message("Please wait...");
+
+  try {
+    if (authMode === "signup") {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+  } catch (error) {
+    const errors = {
+      "auth/email-already-in-use": "This email is already registered. Please login.",
+      "auth/invalid-email": "Please enter a valid email address.",
+      "auth/weak-password": "Choose a stronger password.",
+      "auth/invalid-credential": "Incorrect email or password.",
+      "auth/network-request-failed": "Network error. Check your internet.",
+      "auth/too-many-requests": "Too many attempts. Please try again later.",
+      "auth/operation-not-allowed": "Email/Password sign-in is not enabled in Firebase."
+    };
+
+    message(errors[error.code] || "Error: " + error.code);
+  } finally {
+    $("submitButton").disabled = false;
+  }
+});
+
+$("forgotPassword").addEventListener("click", async () => {
+  const email = $("email").value.trim();
+
+  if (!email) {
+    message("Enter your email address first.");
+    $("email").focus();
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    message("If the account exists, a password reset email will be sent.");
+  } catch (error) {
+    message("Could not send reset email. Check your email and Firebase settings.");
+  }
+});
+
+
+/* PER-USER DEMO PROGRESS */
 
 let completedGames = 0;
-let board = Array(9).fill("");
-let gameActive = false;
-let busy = false;
-let finished = false;
-let moveTimer = null;
+
+function storageKey() {
+  return currentUser ? "tictoe_demo_" + currentUser.uid : "";
+}
 
 function loadProgress() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const raw = localStorage.getItem(storageKey());
+    const saved = raw ? JSON.parse(raw) : null;
 
-    if (saved && Number.isInteger(saved.games) &&
-        saved.games >= 0 && saved.games <= 1000000) {
-      completedGames = saved.games;
-    }
-  } catch (error) {
+    completedGames =
+      saved && Number.isSafeInteger(saved.games) &&
+      saved.games >= 0 && saved.games <= 1000000
+        ? saved.games
+        : 0;
+  } catch {
     completedGames = 0;
   }
 
@@ -273,11 +445,11 @@ function loadProgress() {
 function saveProgress() {
   try {
     localStorage.setItem(
-      STORAGE_KEY,
+      storageKey(),
       JSON.stringify({ games: completedGames })
     );
-  } catch (error) {
-    console.log("Progress could not be saved.");
+  } catch {
+    console.log("Could not save local demo progress.");
   }
 }
 
@@ -286,67 +458,90 @@ function demoBalance() {
 }
 
 function updateStats() {
-  document.getElementById("games").textContent = completedGames;
-  document.getElementById("balance").textContent = "₹" + demoBalance();
+  $("games").textContent = completedGames;
+  $("balance").textContent = "₹" + demoBalance();
 
-  const progress = completedGames % 100;
-  document.getElementById("progressBar").style.width = progress + "%";
-
-  document.getElementById("progressText").textContent =
-    progress + " / 100 games until next milestone";
+  $("progressText").textContent =
+    (completedGames % 100) + " / 100 games until next milestone";
 }
 
-function hideScreens() {
-  ["home", "gameScreen", "rewardsScreen", "withdrawScreen"]
-    .forEach(id => document.getElementById(id).classList.add("hidden"));
-}
 
-function goHome() {
+/* AUTH STATE */
+
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+
   clearTimeout(moveTimer);
-  hideScreens();
-  document.getElementById("home").classList.remove("hidden");
-  updateStats();
-}
+  gameActive = false;
+  busy = false;
 
-function startGame() {
+  if (user) {
+    $("userEmail").textContent = user.email || "Logged in";
+    loadProgress();
+    showScreen("homeScreen");
+  } else {
+    completedGames = 0;
+    $("email").value = "";
+    $("password").value = "";
+    message("");
+    showScreen("authScreen");
+  }
+});
+
+$("logoutButton").addEventListener("click", async () => {
+  await signOut(auth);
+});
+
+
+/* NAVIGATION */
+
+$("offlinePlay").addEventListener("click", () => {
   if (!navigator.onLine) {
-    alert("Internet connection required!");
+    alert("Internet connection required to use Tictoe.");
     return;
   }
 
-  hideScreens();
-  document.getElementById("gameScreen").classList.remove("hidden");
+  showScreen("gameScreen");
   resetBoard();
-}
+});
 
-function resetBoard() {
-  clearTimeout(moveTimer);
-  board = Array(9).fill("");
-  gameActive = true;
-  busy = false;
-  finished = false;
+$("onlinePlay").addEventListener("click", () => {
+  $("onlineMessage").textContent =
+    "Online multiplayer is coming soon! Real-time matchmaking is not active yet.";
+});
 
-  document.getElementById("status").textContent = "Your turn! Select a square.";
-  document.getElementById("restartBtn").textContent = "Restart Match";
+$("rewardsButton").addEventListener("click", () => {
+  $("rewardBalance").textContent = "₹" + demoBalance();
 
-  renderBoard();
-}
+  $("rewardMessage").textContent =
+    completedGames + " demo matches completed. " +
+    (completedGames % 100) + " matches toward the next milestone.";
 
-function renderBoard() {
-  const element = document.getElementById("board");
-  element.innerHTML = "";
+  showScreen("rewardsScreen");
+});
 
-  board.forEach((value, index) => {
-    const button = document.createElement("button");
-    button.className = "cell";
-    button.textContent = value;
+$("withdrawButton").addEventListener("click", () => {
+  $("withdrawBalance").textContent =
+    "Your demo balance: ₹" + demoBalance();
 
-    button.disabled = !gameActive || busy || value !== "";
+  showScreen("withdrawScreen");
+});
 
-    button.addEventListener("click", () => playerMove(index));
-    element.appendChild(button);
-  });
-}
+[
+  "gameHomeButton",
+  "rewardsHomeButton",
+  "withdrawHomeButton"
+].forEach(id => {
+  $(id).addEventListener("click", () => showScreen("homeScreen"));
+});
+
+
+/* TIC-TAC-TOE GAME */
+
+let board = Array(9).fill("");
+let gameActive = false;
+let busy = false;
+let moveTimer = null;
 
 const winningLines = [
   [0,1,2], [3,4,5], [6,7,8],
@@ -355,10 +550,12 @@ const winningLines = [
 ];
 
 function getWinner(squares) {
-  for (const [a, b, c] of winningLines) {
-    if (squares[a] &&
-        squares[a] === squares[b] &&
-        squares[b] === squares[c]) {
+  for (const [a,b,c] of winningLines) {
+    if (
+      squares[a] &&
+      squares[a] === squares[b] &&
+      squares[b] === squares[c]
+    ) {
       return squares[a];
     }
   }
@@ -366,59 +563,38 @@ function getWinner(squares) {
   return squares.every(Boolean) ? "draw" : null;
 }
 
-function playerMove(index) {
-  if (!gameActive || busy || board[index] || finished) return;
+function resetBoard() {
+  clearTimeout(moveTimer);
 
-  board[index] = "X";
+  board = Array(9).fill("");
+  gameActive = true;
+  busy = false;
 
-  if (checkResult()) return;
+  $("status").textContent = "Your turn! Select a square.";
+  $("restartButton").textContent = "Restart Match";
 
-  busy = true;
   renderBoard();
-
-  document.getElementById("status").textContent = "Computer is thinking...";
-
-  moveTimer = setTimeout(() => {
-    if (!gameActive) return;
-
-    computerMove();
-    busy = false;
-
-    if (!checkResult()) {
-      document.getElementById("status").textContent = "Your turn!";
-    }
-
-    renderBoard();
-  }, 350);
 }
 
-function computerMove() {
-  const available = board
-    .map((value, index) => value === "" ? index : -1)
-    .filter(index => index !== -1);
+function renderBoard() {
+  $("board").innerHTML = "";
 
-  if (!available.length) return;
+  board.forEach((value, index) => {
+    const button = document.createElement("button");
 
-  // Try to win.
-  let move = findWinningMove("O");
+    button.className = "cell";
+    button.textContent = value;
+    button.disabled = !gameActive || busy || value !== "";
 
-  // Otherwise block the player.
-  if (move === -1) move = findWinningMove("X");
+    button.addEventListener("click", () => playerMove(index));
 
-  // Take the center if available.
-  if (move === -1 && board[4] === "") move = 4;
-
-  // Otherwise select a random empty square.
-  if (move === -1) {
-    move = available[Math.floor(Math.random() * available.length)];
-  }
-
-  board[move] = "O";
+    $("board").appendChild(button);
+  });
 }
 
 function findWinningMove(player) {
   for (let i = 0; i < 9; i++) {
-    if (board[i] !== "") continue;
+    if (board[i]) continue;
 
     const test = [...board];
     test[i] = player;
@@ -429,75 +605,103 @@ function findWinningMove(player) {
   return -1;
 }
 
-function checkResult() {
-  const result = getWinner(board);
+function computerMove() {
+  const available = board
+    .map((value, index) => value === "" ? index : -1)
+    .filter(index => index !== -1);
 
-  if (!result) {
-    renderBoard();
-    return false;
+  if (!available.length) return;
+
+  let move = findWinningMove("O");
+
+  if (move === -1) move = findWinningMove("X");
+
+  if (move === -1 && !board[4]) move = 4;
+
+  if (move === -1) {
+    move = available[Math.floor(Math.random() * available.length)];
   }
 
+  board[move] = "O";
+}
+
+function finishGame(result) {
   gameActive = false;
   busy = false;
-  finished = true;
 
   if (result === "X") {
-    document.getElementById("status").textContent = "🎉 You won!";
+    $("status").textContent = "🎉 You won!";
   } else if (result === "O") {
-    document.getElementById("status").textContent = "Computer won! Try again.";
+    $("status").textContent = "Computer won! Try again.";
   } else {
-    document.getElementById("status").textContent = "It's a draw!";
+    $("status").textContent = "It's a draw!";
   }
 
-  // Prototype counter: all completed outcomes count.
   completedGames++;
   saveProgress();
   updateStats();
   renderBoard();
 
-  document.getElementById("restartBtn").textContent = "Play Next Match";
-
-  return true;
+  $("restartButton").textContent = "Play Next Match";
 }
 
-function showRewards() {
-  hideScreens();
-  document.getElementById("rewardsScreen").classList.remove("hidden");
+function checkResult() {
+  const result = getWinner(board);
 
-  document.getElementById("rewardBalance").textContent = "₹" + demoBalance();
+  if (result) {
+    finishGame(result);
+    return true;
+  }
 
-  document.getElementById("rewardMessage").textContent =
-    completedGames + " demo matches completed. " +
-    (completedGames % 100) + " matches toward the next milestone.";
+  return false;
 }
 
-function showWithdrawal() {
-  hideScreens();
-  document.getElementById("withdrawScreen").classList.remove("hidden");
-  document.getElementById("withdrawBalance").textContent =
-    "Demo balance: ₹" + demoBalance();
+function playerMove(index) {
+  if (!gameActive || busy || board[index]) return;
+
+  board[index] = "X";
+
+  if (checkResult()) return;
+
+  busy = true;
+  renderBoard();
+
+  $("status").textContent = "Computer is thinking...";
+
+  moveTimer = setTimeout(() => {
+    if (!gameActive || !currentUser) return;
+
+    computerMove();
+    busy = false;
+
+    if (!checkResult()) {
+      $("status").textContent = "Your turn!";
+      renderBoard();
+    }
+  }, 350);
 }
+
+$("restartButton").addEventListener("click", resetBoard);
 
 window.addEventListener("offline", () => {
-  if (!document.getElementById("gameScreen").classList.contains("hidden")) {
-    gameActive = false;
-    busy = false;
-    clearTimeout(moveTimer);
-    document.getElementById("status").textContent =
-      "Internet disconnected. Reconnect to continue.";
-    renderBoard();
-  }
+  if (!currentUser) return;
+
+  clearTimeout(moveTimer);
+  gameActive = false;
+  busy = false;
+
+  $("status").textContent =
+    "Internet disconnected. Reconnect to continue.";
+
+  renderBoard();
 });
 
 window.addEventListener("online", () => {
-  if (!document.getElementById("gameScreen").classList.contains("hidden")) {
-    document.getElementById("status").textContent =
-      "Connection restored. Start a new match.";
+  if (currentUser && !$("gameScreen").classList.contains("hidden")) {
     resetBoard();
   }
 });
 
-loadProgress();
 </script>
 
 </body>
