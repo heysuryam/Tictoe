@@ -41,5 +41,4 @@ jobs:
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Deploy Firebase Functions
-        run: firebase deploy --only functions --project tictoe-1st
-        
+        run: firebase deploy --only functions --project tictoe-1st --debug
