@@ -34,7 +34,6 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           project_id: tictoe-1st
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           create_credentials_file: true
           export_environment_variables: true
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT }}
